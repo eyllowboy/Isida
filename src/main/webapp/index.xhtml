@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" >
+<h:head>
+    <title>JSF Title</title>
+</h:head>
+<f:view>
+
+
+
+         <p:panel id="panel-id" header="Страница поиска ссылок">
+            <h:form id="table">
+             <div class="p-field p-grid">
+                <label for="searchLink" class="p-col-fixed" style="width:400px">Анализируемая страница</label>
+                   <p:messages id="msgs" showDetail="true"/>
+                        <div   class="p-col-6">
+                        <p:inputText style="width: 50%" id="searchLink" value="#{search.url}"
+                                  title="Пожалуйта введите ссылку"   required="true" label="Анализируемая страница">
+                            <f:validateLength minimum = "5" />
+                        </p:inputText>
+
+
+
+
+                      <p:commandButton  id="searchButton" value="Анализировать" action="#{search.findAllLinks()}"
+                                 onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"
+                                      update="msgs, linkPanel " />
+
+
+                   </div>
+               </div>
+            </h:form>
+         </p:panel>
+
+
+
+
+
+         <h:panelGroup id="linkPanel" >
+            <p:panel  rendered="#{not empty search.linkList}" header="Обнаруженные ссылки">
+
+
+                  <p:dataTable value="#{search.linkList}" var="link" id="tableLink" rowIndexVar="index" >
+                     <p:column headerText="№ п/п">
+                         <h:outputText value="#{index+1}"/>
+                     </p:column>
+
+                     <p:column headerText="Имя ссылки">
+                         <h:outputText value="#{link.name}"/>
+                     </p:column>
+
+                     <p:column headerText="Адрес ссылки">
+                         <h:form>
+                             <p:commandButton value="#{link.href}" update="panel-id"
+                             action="#{search.setUrl(link.href)}" />
+                         </h:form>
+                     </p:column>
+
+                  </p:dataTable>
+            </p:panel>
+
+             <div style="display:flex; justify-content: center">
+                 <p:commandButton rendered="#{not empty search.linkList}" style="width: 50%"
+                                  value="Очистить" action="#{search.clearLinkList}" update="linkPanel"/>
+             </div>
+         </h:panelGroup>
+
+
+      <p:dialog widgetVar="statusDialog" modal="true"   draggable="false" closable="false" resizable="false" showHeader="false">
+         <p:graphicImage name="images/load.gif" width="60" height="60"/>
+      </p:dialog>
+
+
+</f:view>
+
+</html>
